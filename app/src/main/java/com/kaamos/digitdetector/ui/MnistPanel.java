@@ -5,10 +5,7 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -22,56 +19,59 @@ import javax.swing.JPanel;
 public class MnistPanel extends JPanel {
 
     private static final int NUMBER_OF_IMAGES = 100;
+    private static final int MNIST_IMAGE_LENGTH
+            = ImageUtils.MNIST_IMAGE_SIZE * ImageUtils.MNIST_IMAGE_SIZE;
+
 
     public static final int NUMBER_OF_IMAGES_IN_ROW = 10;
     public static final int NUMBER_OF_IMAGES_IN_COLUMN = 10;
     public static final int PADDING = 4;
 
+    private static final int MNIST_IMAGE_LABEL_SIZE = ImageUtils.MNIST_IMAGE_SIZE + PADDING;
+
     public MnistPanel() throws IOException {
         this.setLayout(new GridLayout(NUMBER_OF_IMAGES_IN_ROW, NUMBER_OF_IMAGES_IN_COLUMN));
         final INDArray mnistImagesFlatten = Nd4j.readNumpy("../trainer/mnist.csv");
 
+        final double[] mnistImageRawData =  getMnistRawPixels(mnistImagesFlatten);
+
+        for (int imageIndex = 0; imageIndex < NUMBER_OF_IMAGES; imageIndex++) {
+            final byte[] oneMnistImage = getOneMnistImage(mnistImageRawData, imageIndex);
+            final BufferedImage image = ImageUtils.convertBytesToImage(oneMnistImage);
+            addImageToUi(image);
+        }
+    }
+
+    private double[] getMnistRawPixels(final INDArray mnistData) {
         final int[] mnistImagesShape = new int[] {NUMBER_OF_IMAGES,
                                                   ImageUtils.MNIST_IMAGE_SIZE,
                                                   ImageUtils.MNIST_IMAGE_SIZE};
-        final INDArray mnistImages = mnistImagesFlatten.reshape(mnistImagesShape);
-        final double[] mnistImageRawData = mnistImages.data().asDouble();
-        final int oneMnistImageLength = ImageUtils.MNIST_IMAGE_SIZE * ImageUtils.MNIST_IMAGE_SIZE;
-        for (int imageIndex = 0; imageIndex < NUMBER_OF_IMAGES; imageIndex++) {
-            // MNIST images have been exported as unsigned bytes...
-            final double[] oneMnistImageRaw = Arrays.copyOfRange(mnistImageRawData,
-                                                                 imageIndex * oneMnistImageLength,
-                                                                 (imageIndex + 1) * oneMnistImageLength);
+        final INDArray mnistImages = mnistData.reshape(mnistImagesShape);
+        return mnistImages.data().asDouble();
+    }
 
-            // Now we need to convert the to signed bytes so that Java understands them
-            final byte[] oneMnistImageSigned = new byte[oneMnistImageRaw.length];
-            for (int i = 0; i < oneMnistImageRaw.length; i++) {
-                oneMnistImageSigned[i] = (byte) (~(int) oneMnistImageRaw[i] & 0xFF);
-            }
+    private byte[] getOneMnistImage(final double[] rawMnistData, final int imageNumber) {
+        // MNIST images have been exported as unsigned bytes...
+        final double[] oneMnistImageRaw = Arrays.copyOfRange(rawMnistData,
+                                                             imageNumber * MNIST_IMAGE_LENGTH,
+                                                             (imageNumber + 1) * MNIST_IMAGE_LENGTH);
 
-            // Create the image
-            final DataBufferByte dataBuffer = new DataBufferByte(oneMnistImageSigned,
-                                                                 oneMnistImageLength);
-
-            final BufferedImage mnistImage = new BufferedImage(ImageUtils.MNIST_IMAGE_SIZE,
-                                                               ImageUtils.MNIST_IMAGE_SIZE,
-                                                               BufferedImage.TYPE_BYTE_GRAY);
-
-            final Raster raster = Raster.createRaster(mnistImage.getSampleModel(),
-                                                      dataBuffer,
-                                                      new Point());
-            mnistImage.setData(raster);
-
-            // Create the UI component
-            final JLabel mnistImageLabel = new JLabel();
-            final int manistImageLabelSize = ImageUtils.MNIST_IMAGE_SIZE + PADDING;
-            mnistImageLabel.setPreferredSize(new Dimension(manistImageLabelSize,
-                                                           manistImageLabelSize));
-            mnistImageLabel.setMaximumSize(new Dimension(manistImageLabelSize,
-                                                         manistImageLabelSize));
-            mnistImageLabel.setIcon(new ImageIcon(mnistImage));
-
-            this.add(mnistImageLabel);
+        // Now we need to convert them to signed bytes so that Java understands them
+        final byte[] oneMnistImageSigned = new byte[oneMnistImageRaw.length];
+        for (int i = 0; i < oneMnistImageRaw.length; i++) {
+            oneMnistImageSigned[i] = (byte) (~(int) oneMnistImageRaw[i] & 0xFF);
         }
+
+        return oneMnistImageSigned;
+    }
+
+    private void addImageToUi(final BufferedImage image) {
+        // Create the UI component
+        final JLabel mnistImageLabel = new JLabel();
+        final Dimension labelSize = new Dimension(MNIST_IMAGE_LABEL_SIZE, MNIST_IMAGE_LABEL_SIZE);
+        mnistImageLabel.setPreferredSize(labelSize);
+        mnistImageLabel.setMaximumSize(labelSize);
+        mnistImageLabel.setIcon(new ImageIcon(image));
+        this.add(mnistImageLabel);
     }
 }

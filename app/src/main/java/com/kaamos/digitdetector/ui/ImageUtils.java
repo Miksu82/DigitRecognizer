@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
 
 public class ImageUtils {
 
@@ -124,6 +125,22 @@ public class ImageUtils {
         }
 
         System.out.println("");
+    }
+
+    public static BufferedImage convertBytesToImage(byte[] imageData) {
+        // Create the image
+        final DataBufferByte dataBuffer = new DataBufferByte(imageData,
+                                                             imageData.length);
+
+        final BufferedImage image = new BufferedImage(ImageUtils.MNIST_IMAGE_SIZE,
+                                                      ImageUtils.MNIST_IMAGE_SIZE,
+                                                      BufferedImage.TYPE_BYTE_GRAY);
+
+        final Raster raster = Raster.createRaster(image.getSampleModel(),
+                                                  dataBuffer,
+                                                  new Point());
+        image.setData(raster);
+        return image;
     }
 
     private static Point findCenterOfMass(final BufferedImage image) {

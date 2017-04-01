@@ -34,8 +34,7 @@ public class Main {
                                                IOException,
                                                UnsupportedKerasConfigurationException {
         final JFrame frame = new JFrame("Draw a number");
-        frame.setSize(UI_SIZE, UI_SIZE );
-        frame.setLocation(UI_SIZE, UI_SIZE);
+        frame.setSize(UI_SIZE, UI_SIZE);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
