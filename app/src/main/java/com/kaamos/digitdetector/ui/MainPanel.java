@@ -52,13 +52,13 @@ public class MainPanel extends JPanel implements NumberDrawnListener {
         // Set image labels
         croppedImage.setText("Cropped image");
         scaledImage.setText("Cropped image scaled to 20x20 box");
-        finalImage.setText("Final 28x28 input image for out recognizer");
+        finalImage.setText("Final 28x28 model input image");
         showMnistData.setText("Show 100 MNIST training data samples");
 
         // Set JLabel text positions
-        croppedImage.setVerticalTextPosition(SwingConstants.TOP);
-        scaledImage.setVerticalTextPosition(SwingConstants.TOP);
-        finalImage.setVerticalTextPosition(SwingConstants.TOP);
+        croppedImage.setVerticalTextPosition(SwingConstants.BOTTOM);
+        scaledImage.setVerticalTextPosition(SwingConstants.BOTTOM);
+        finalImage.setVerticalTextPosition(SwingConstants.BOTTOM);
 
         croppedImage.setHorizontalTextPosition(SwingConstants.CENTER);
         scaledImage.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -90,7 +90,7 @@ public class MainPanel extends JPanel implements NumberDrawnListener {
         this.add(topContainer);
 
         showMnistData.addActionListener(event -> {
-            final JFrame frame = new JFrame("First 100 Mnist training data");
+            final JFrame frame = new JFrame("First 100 MNIST training data");
             final int mnistImageRectangleSize = (ImageUtils.MNIST_IMAGE_SIZE + MnistPanel.PADDING);
             final int frameWidth = MnistPanel.NUMBER_OF_IMAGES_IN_ROW * mnistImageRectangleSize;
             final int frameHeight = MnistPanel.NUMBER_OF_IMAGES_IN_COLUMN * mnistImageRectangleSize;
@@ -163,7 +163,7 @@ public class MainPanel extends JPanel implements NumberDrawnListener {
         finalImage.setIcon(new ImageIcon(mnistInputImage));
 
         final int result = digitDetector.recognize(mnistInputImage);
-        resultText.setText("You draw: " + result);
+        resultText.setText("You wrote: " + result);
     }
 
     // Shamelessly copied from
