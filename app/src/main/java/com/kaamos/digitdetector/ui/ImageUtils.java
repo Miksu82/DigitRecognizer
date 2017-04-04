@@ -127,7 +127,7 @@ public class ImageUtils {
         System.out.println("");
     }
 
-    public static BufferedImage convertBytesToImage(byte[] imageData) {
+    public static BufferedImage convertBytesToImage(final byte[] imageData) {
         // Create the image
         final DataBufferByte dataBuffer = new DataBufferByte(imageData,
                                                              imageData.length);

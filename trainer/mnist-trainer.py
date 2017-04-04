@@ -3,7 +3,7 @@ Uses Keras to train model for handwritten digit detection by using MNIST data.
 Does not work with Keras 2.x or above.
 Requires Tensorflow backed.
 
-Image classification hevaily inspired by
+Image classification heavily inspired by
 https://github.com/the-laughing-monkey/learning-ai-if-you-suck-at-math
 """
 
@@ -12,8 +12,8 @@ from keras.layers import Dense, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils.np_utils import to_categorical
 from keras.datasets import mnist
-
 import numpy
+
 # fix random seed for reproducibility
 seed = 7
 numpy.random.seed(seed)
@@ -30,6 +30,9 @@ pool_size = (2, 2)
 kernel_size = (3, 3)
 
 (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+
+# Save some training data to a file so we can show it in the Java app
+X_train[0:100].tofile("mnist.csv", sep=",")
 
 # Since the model will be used in a Java app where there are no
 # grayscale pixels, we convert the training and test data to

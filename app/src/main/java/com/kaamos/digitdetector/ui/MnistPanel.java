@@ -31,7 +31,7 @@ public class MnistPanel extends JPanel {
 
     public MnistPanel() throws IOException {
         this.setLayout(new GridLayout(NUMBER_OF_IMAGES_IN_ROW, NUMBER_OF_IMAGES_IN_COLUMN));
-        final INDArray mnistImagesFlatten = Nd4j.readNumpy("../trainer/mnist.csv");
+        final INDArray mnistImagesFlatten = Nd4j.readNumpy("../trainer/mnist.csv", ",");
 
         final double[] mnistImageRawData =  getMnistRawPixels(mnistImagesFlatten);
 
