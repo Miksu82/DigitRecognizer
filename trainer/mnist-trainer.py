@@ -14,6 +14,8 @@ from keras.utils.np_utils import to_categorical
 from keras.datasets import mnist
 import numpy
 
+##TODO: CHECK LeNet-5 for hyperparameters
+
 # fix random seed for reproducibility
 seed = 7
 numpy.random.seed(seed)
